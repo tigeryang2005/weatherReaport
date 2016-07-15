@@ -16,11 +16,11 @@ public class MainActivity extends AppCompatActivity {
         HttpUtil.sendHttpRequest("http://www.weather.com.cn/data/list3/city.xml", new HttpCallbackListener() {
             @Override
             public void onFinish(String response) {
-                Logger.d(response);
+                //Logger.d(response);
                 String[] strings = response.split(",");
                 //Logger.d(strings);
                 for (String s : strings){
-                    Logger.d(s);
+                    //Logger.d(s);
                     String[] strings1 = s.split("\\|");//“.”和“|”都是转义字符，必须得加"\";
                     for (String s1 : strings1){
                         Logger.d(s1);
