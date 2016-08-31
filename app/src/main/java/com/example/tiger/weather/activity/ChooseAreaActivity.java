@@ -2,7 +2,10 @@ package com.example.tiger.weather.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
@@ -20,14 +23,10 @@ import com.example.tiger.weather.model.Province;
 import com.example.tiger.weather.util.HttpCallbackListener;
 import com.example.tiger.weather.util.HttpUtil;
 import com.example.tiger.weather.util.Utility;
-import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by tiger on 16/7/18.
- */
 public class ChooseAreaActivity extends Activity {
     public static final int LEVEL_PROVINCE = 0;
     public static final int LEVEL_CITY = 1;
@@ -38,45 +37,56 @@ public class ChooseAreaActivity extends Activity {
     private ListView listView;
     private ArrayAdapter<String> adapter;
     private WrDb wrDb;
-    private List<String> dataList = new ArrayList<String>();
-
+    private List<String> dataList = new ArrayList<>();
     private List<Province> provinceList;
     private List<City> cityList;
     private List<County> countyList;
-
     private Province selectedProvince;
     private City selectedCity;
-    private County selectedCounty;
-
     private int currentLevel;
+    private boolean isFromWeatherActivity;
 
     @Override
-    protected void onCreate(Bundle saveInstenceState){
+    protected void onCreate(Bundle saveInstenceState) {
         super.onCreate(saveInstenceState);
+        isFromWeatherActivity = getIntent().getBooleanExtra("from_weather_activity", false);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if (preferences.getBoolean("city_selected", false) && !isFromWeatherActivity) {
+            Intent intent = new Intent(this, WeatherActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.choose_area);
-        titleText = (TextView)findViewById(R.id.title_text);
-        listView = (ListView)findViewById(R.id.list_view);
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, dataList);
+        titleText = (TextView) findViewById(R.id.title_text);
+        listView = (ListView) findViewById(R.id.list_view);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, dataList);
         listView.setAdapter(adapter);
         wrDb = WrDb.getInstence(this);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (currentLevel == LEVEL_PROVINCE){
+                if (currentLevel == LEVEL_PROVINCE) {
                     selectedProvince = provinceList.get(position);
                     queryCities();
-                }else if (currentLevel == LEVEL_CITY){
+                } else if (currentLevel == LEVEL_CITY) {
                     selectedCity = cityList.get(position);
                     queryCounties();
+                } else if (currentLevel == LEVEL_COUNTY) {
+                    String countyCode = countyList.get(position).getCountyId();
+                    Intent intent = new Intent(ChooseAreaActivity.this, WeatherActivity.class);
+                    intent.putExtra("county_code", countyCode);
+                    startActivity(intent);
+                    finish();
                 }
             }
         });
         queryProvince();
     }
 
-    private void queryFromServer(final String code, final String type){
-        String address = "";
+    private void queryFromServer(final String code, final String type) {
+        String address;
         if (!TextUtils.isEmpty(code)) {
             address = "http://www.weather.com.cn/data/list3/city" + code + ".xml";
         } else {
@@ -86,28 +96,25 @@ public class ChooseAreaActivity extends Activity {
         HttpUtil.sendHttpRequest(address, new HttpCallbackListener() {
             @Override
             public void onFinish(String response) {
-                //Logger.d(response);
                 boolean result = false;
-                if ("province".equals(type)){
+                if ("province".equals(type)) {
                     result = Utility.handleProvincesResponse(wrDb, response);
-                }else if ("city".equals(type)){
+                } else if ("city".equals(type)) {
                     result = Utility.handleCitiesResponse(wrDb, response, selectedProvince.getProId());
-                }else if ("county".equals(type)){
+                } else if ("county".equals(type)) {
                     result = Utility.handleCountiesResponse(wrDb, response, selectedCity.getCityId());
                 }
-                //Logger.d(result);
-                if (result){
+                if (result) {
                     //通过runOnUiThread()方法回到主线程处理逻辑
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Logger.d("incolse");
                             closeProgressDialog();
-                            if ("province".equals(type)){
+                            if ("province".equals(type)) {
                                 queryProvince();
-                            }else if ("city".equals(type)){
+                            } else if ("city".equals(type)) {
                                 queryCities();
-                            }else if ("county".equals(type)){
+                            } else if ("county".equals(type)) {
                                 queryCounties();
                             }
                         }
@@ -128,62 +135,62 @@ public class ChooseAreaActivity extends Activity {
         });
     }
 
-    private void queryProvince(){
+    private void queryProvince() {
         provinceList = wrDb.loadProvince();
-        if (provinceList.size() > 0){
+        if (provinceList.size() > 0) {
             dataList.clear();
-            for (Province p : provinceList){
+            for (Province p : provinceList) {
                 dataList.add(p.getProName());
             }
             adapter.notifyDataSetChanged();
             listView.setSelection(0);
             titleText.setText("中国");
             currentLevel = LEVEL_PROVINCE;
-        }else {
+        } else {
             queryFromServer(null, "province");
         }
     }
 
-    private void queryCities(){
+    private void queryCities() {
         cityList = wrDb.loadCity(selectedProvince.getProId());
-        if (cityList.size() > 0){
+        if (cityList.size() > 0) {
             dataList.clear();
-            for (City city : cityList){
+            for (City city : cityList) {
                 dataList.add(city.getCityName());
             }
             adapter.notifyDataSetChanged();
             listView.setSelection(0);
             titleText.setText(selectedProvince.getProName());
             currentLevel = LEVEL_CITY;
-        }else {
+        } else {
             queryFromServer(selectedProvince.getProId(), "city");
         }
     }
 
-    private void queryCounties(){
+    private void queryCounties() {
         countyList = wrDb.loadCounties(selectedCity.getCityId());
-        if (countyList.size() > 0){
+        if (countyList.size() > 0) {
             dataList.clear();
-            for (County county : countyList){
+            for (County county : countyList) {
                 dataList.add(county.getCountyName());
             }
             adapter.notifyDataSetChanged();
             listView.setSelection(0);
             titleText.setText(selectedCity.getCityName());
             currentLevel = LEVEL_COUNTY;
-        }else {
+        } else {
             queryFromServer(selectedCity.getCityId(), "county");
         }
     }
 
-    private void closeProgressDialog(){
-        if (progressDialog != null){
+    private void closeProgressDialog() {
+        if (progressDialog != null) {
             progressDialog.dismiss();
         }
     }
 
-    private void showProgressDialog(){
-        if (progressDialog == null){
+    private void showProgressDialog() {
+        if (progressDialog == null) {
             progressDialog = new ProgressDialog(this);
             progressDialog.setMessage("正在加载...");
             progressDialog.setCanceledOnTouchOutside(false);
@@ -192,12 +199,16 @@ public class ChooseAreaActivity extends Activity {
     }
 
     @Override
-    public void onBackPressed(){
-        if (currentLevel == LEVEL_COUNTY){
+    public void onBackPressed() {
+        if (currentLevel == LEVEL_COUNTY) {
             queryCities();
-        }else if (currentLevel == LEVEL_CITY){
+        } else if (currentLevel == LEVEL_CITY) {
             queryProvince();
-        }else {
+        } else {
+            if (isFromWeatherActivity) {
+                Intent intent = new Intent(this, WeatherActivity.class);
+                startActivity(intent);
+            }
             finish();
         }
     }
