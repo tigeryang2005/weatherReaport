@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">Weather</string>
+    <string name="app_name">天气预报</string>
     <string name="pubulish_text">昨日%1$s发布</string>
 </resources>

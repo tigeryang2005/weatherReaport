@@ -38,7 +38,9 @@ public class WeatherActivityTest extends ActivityInstrumentationTestCase2 {
     @Rule
     public ActivityTestRule<WeatherActivity> mActivityRule = new ActivityTestRule<>(WeatherActivity.class);
 
-    //private UiDevice mDevice;
+//    private UiDevice mDevice;
+//    private Activity mActivity;
+
     private String mStringToBetyped;
 
     public WeatherActivityTest() {
@@ -54,9 +56,9 @@ public class WeatherActivityTest extends ActivityInstrumentationTestCase2 {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        //injectInstrumentation(InstrumentationRegistry.getInstrumentation());
-        getActivity();
-        //mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+//        injectInstrumentation(InstrumentationRegistry.getInstrumentation());
+//        mActivity = getActivity();
+//        mDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         //Espresso.registerIdlingResources(new WeatherActivity(getActivity().findViewById(R.id.weather_info_layout)));
     }
 
@@ -70,8 +72,17 @@ public class WeatherActivityTest extends ActivityInstrumentationTestCase2 {
         //mDevice.findObject(By.desc("应用")).click();
         //mDevice.wait(Until.hasObject(By.desc("Weather")), 500);
         //mDevice.findObject(By.desc("Weather")).click();
-        onView(withId(R.id.refresh_weather)).check(matches(isDisplayed()));
-        //onView(withId(R.id.weather_desp)).perform(typeText("test123"), closeSoftKeyboard());
+//        try {
+//            Thread.sleep(3000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        onView(withId(R.id.splash_view)).check(matches(isDisplayed()));
+//        UiObject2 closeButton = mDevice.wait(Until.findObject(By.text("关闭")), 500);
+//        closeButton.click();
+        //onView(withId(R.id.refresh_weather)).check(matches(isDisplayed()));
+        onView(withId(R.id.splash_view)).check(doesNotExist());
+        onView(withId(R.id.weather_desp)).perform(typeText("test123"), closeSoftKeyboard());
         onView(withId(R.id.switch_city)).check(matches(isDisplayed()));
         onView(withId(R.id.switch_city)).perform(click());
         Log.d("点击城市选择按键", "");
