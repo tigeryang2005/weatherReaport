@@ -53,7 +53,7 @@ public class AutoUpdateService extends Service {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                updateWeather();
+                //updateWeather();
                 Logger.e("print every minite");
                 Message message = new Message();
                 message.what = 1;

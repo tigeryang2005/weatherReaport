@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class WeatherInfo implements Serializable {
     /**
      * city : 昆山
-     * cityid : 101190404
+     * cityId : 101190404
      * temp1 : 21°C
      * temp2 : 9°C
      * weather : 多云转小雨
@@ -21,7 +21,7 @@ public class WeatherInfo implements Serializable {
 
     public static class WeatherinfoBean {
         public String city;
-        public String cityid;
+        public String cityId;
         public String temp1;
         public String temp2;
         public String weather;

@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.example.tiger.weather.R;
 import com.example.tiger.weather.model.WeatherInfo;
-import com.example.tiger.weather.service.AutoUpdataService;
 import com.example.tiger.weather.util.HttpCallbackListener;
 import com.example.tiger.weather.util.HttpUtil;
 import com.example.tiger.weather.util.Utility;
@@ -162,8 +161,8 @@ public class WeatherActivity extends Activity implements View.OnClickListener {
             currentDataText.setText(DateFormat.getDateInstance().format(new Date()));
             weatherInfoLayout.setVisibility(View.VISIBLE);
             cityNameText.setVisibility(View.VISIBLE);
-            Intent intent = new Intent(this, AutoUpdataService.class);
-            startService(intent);
+            //Intent intent = new Intent(this, AutoUpdateService.class);
+            //startService(intent);
         } else {
             Logger.d("weatherinfoBean is null");
         }
