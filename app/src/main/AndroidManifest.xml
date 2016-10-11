@@ -33,7 +33,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".service.AutoUpdataService" />
+        <service android:name=".service.AutoUpdateService" />
         <receiver android:name=".receiver.AutoUpdateReceiver" />
         <service
             android:name="com.mrocker.advertising.net.DownLoadService"

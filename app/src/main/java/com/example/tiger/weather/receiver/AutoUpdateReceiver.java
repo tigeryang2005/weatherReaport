@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.example.tiger.weather.service.AutoUpdataService;
+import com.example.tiger.weather.service.AutoUpdateService;
 import com.orhanobut.logger.Logger;
 
 /**
@@ -16,7 +16,7 @@ public class AutoUpdateReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Logger.d(intent.getStringExtra("123"));
         Logger.d("broadcastreceiver" + intent.getAction());
-        Intent i = new Intent(context, AutoUpdataService.class);
+        Intent i = new Intent(context, AutoUpdateService.class);
         Logger.d("broadcastreceiver new intent" + i.getAction());
         context.startService(i);
     }

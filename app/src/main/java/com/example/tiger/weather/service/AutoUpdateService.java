@@ -21,7 +21,7 @@ import com.orhanobut.logger.Logger;
 /**
  * Created by tiger on 16/9/8.
  */
-public class AutoUpdataService extends Service {
+public class AutoUpdateService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -63,7 +63,7 @@ public class AutoUpdataService extends Service {
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         int anHour = 1000 * 60 * 60 * 8;
         long triggerAtTime = System.currentTimeMillis() + anHour;
-        Intent i = new Intent(this, AutoUpdataService.class);
+        Intent i = new Intent(this, AutoUpdateService.class);
         PendingIntent pendingIntent = PendingIntent.getService(this, 0, i, 0);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             alarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtTime, pendingIntent);
@@ -80,7 +80,7 @@ public class AutoUpdataService extends Service {
         HttpUtil.sendHttpRequest(address, new HttpCallbackListener() {
             @Override
             public void onFinish(String response) {
-                Utility.handleWeatherRespose(AutoUpdataService.this, response);
+                Utility.handleWeatherRespose(AutoUpdateService.this, response);
             }
 
             @Override
