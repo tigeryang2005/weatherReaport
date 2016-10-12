@@ -130,7 +130,7 @@ public class WeatherActivity extends Activity implements View.OnClickListener {
                 } else if ("weatherCode".equals(type)) {
                     weatherinfo = Utility.handleWeatherRespose(WeatherActivity.this, response);
                     DemoRetrofit demoRetrofit = new DemoRetrofit();
-                    demoRetrofit.testRetrofitHttpGet();
+                    demoRetrofit.testRetrofitHttpGet("101010300");
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

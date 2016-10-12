@@ -10,6 +10,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 
 import static android.content.ContentValues.TAG;
 
@@ -19,7 +20,7 @@ import static android.content.ContentValues.TAG;
 
 public class DemoRetrofit {
 
-    public void testRetrofitHttpGet() {
+    public void testRetrofitHttpGet(String cityId) {
         //step1
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://www.weather.com.cn/data/cityinfo/")
@@ -28,7 +29,7 @@ public class DemoRetrofit {
         //step2
         DemoServiece serviece = retrofit.create(DemoServiece.class);
         //step3
-        Call<WeatherInfo> call = serviece.testHttpGet();
+        Call<WeatherInfo> call = serviece.testHttpGet(cityId);
         //step4
         call.enqueue(new Callback<WeatherInfo>() {
             @Override
@@ -45,7 +46,7 @@ public class DemoRetrofit {
 
 
     public interface DemoServiece {
-        @GET("101010100.html")
-        Call<WeatherInfo> testHttpGet();
+        @GET("{cityId}.html")
+        Call<WeatherInfo> testHttpGet(@Path("cityId") String cityId);
     }
 }
