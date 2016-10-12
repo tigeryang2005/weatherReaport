@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.example.tiger.weather.R;
 import com.example.tiger.weather.model.WeatherInfo;
+import com.example.tiger.weather.util.DemoRetrofit;
 import com.example.tiger.weather.util.HttpCallbackListener;
 import com.example.tiger.weather.util.HttpUtil;
 import com.example.tiger.weather.util.Utility;
@@ -128,6 +129,8 @@ public class WeatherActivity extends Activity implements View.OnClickListener {
                     }
                 } else if ("weatherCode".equals(type)) {
                     weatherinfo = Utility.handleWeatherRespose(WeatherActivity.this, response);
+                    DemoRetrofit demoRetrofit = new DemoRetrofit();
+                    demoRetrofit.testRetrofitHttpGet();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
