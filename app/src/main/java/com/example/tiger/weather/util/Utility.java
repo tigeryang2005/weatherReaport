@@ -17,11 +17,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.orhanobut.logger.Logger;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.content.ContentValues.TAG;
 
@@ -33,12 +34,9 @@ public class Utility {
     public static WeatherInfo handleWeatherRespose(Context context, String response) {
         try {
             Log.d(TAG, "handleWeatherRespose: " + response);
-            //Logger.json(response);
             List<String> list = new ArrayList<>();
             list.add("a");
             list.add("b");
-//            Logger.d(list);
-//            Logger.t(1).d(cityName);
             WeatherInfo weatherInfo = new WeatherInfo();
             JSONObject jsonObject = new JSONObject(response);
             JSONObject jsonObjectWeatherInfo = jsonObject.optJSONObject("weatherinfo");
@@ -48,20 +46,26 @@ public class Utility {
             weatherInfo.weatherinfo.temp2 = jsonObjectWeatherInfo.optString("temp2");
             weatherInfo.weatherinfo.ptime = jsonObjectWeatherInfo.optString("ptime");
             weatherInfo.weatherinfo.weather = jsonObjectWeatherInfo.optString("weather");
-            Log.d(TAG, "handleWeatherRespose: " + weatherInfo.weatherinfo.city);
             Gson gson = new Gson();
             JsonArray jArray = new JsonArray();
             jArray.add(234);
             jArray.add("123");
             JsonObject jObject = new JsonObject();
             jObject.add("array", jArray);
-
+            jObject.addProperty("propety", "name");
             String str = gson.toJson(weatherInfo);
-            JsonElement jElement = gson.toJsonTree(str);
-            jObject.add("www", jElement);
+            JsonElement jElement = gson.toJsonTree(list);
+            jObject.addProperty("www", str);
+            jObject.add("list", jElement);
+            Map map = new HashMap();
+            map.put("123", 123);
+            map.put("432", 123);
+            map.put("123", 321);
+            jElement = gson.toJsonTree(map);
+            jObject.add("map", jElement);
+            jElement = gson.toJsonTree(new String[]{"sex", "weight", "height"});
+            jObject.add("string[]", jElement);
             Logger.json(jObject.toString());
-//            Gson gson = new Gson();
-//            WeatherInfo weatherinfo = gson.fromJson(response, WeatherInfo.class);
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
             editor.putBoolean("city_selected", true);
             editor.apply();
