@@ -11,6 +11,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 import static android.content.ContentValues.TAG;
 
@@ -29,7 +30,7 @@ public class DemoRetrofit {
         //step2
         DemoServiece serviece = retrofit.create(DemoServiece.class);
         //step3
-        Call<RequestBody> call = serviece.testHttpGet(cityId);
+        Call<RequestBody> call = serviece.testHttpGet(cityId, "mvalue");
         //step4
         call.enqueue(new Callback<RequestBody>() {
             @Override
@@ -62,6 +63,6 @@ public class DemoRetrofit {
 
     public interface DemoServiece {
         @GET("{cityId}")
-        Call<RequestBody> testHttpGet(@Path("cityId") String cityId);
+        Call<RequestBody> testHttpGet(@Path("cityId") String cityId, @Query("param") String value);
     }
 }
