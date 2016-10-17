@@ -70,6 +70,9 @@ public class DemoRetrofit {
                 Log.d(TAG, "onResponse: " + response.body().a);
                 Log.d(TAG, "onResponse: " + response.body().b);
                 Logger.d(response.body().c);
+                //Retrofit 的 Response 还有一个方法叫做 raw()，调用该方法就可以把 Retrofit 的Response
+                // 转换为原生的 OkHttp 当中的 Response。而现在我们就很容器实现 header 的读取了吧。
+                Log.d(TAG, "onResponse: throgh raw to get Date is: " + response.raw().header("Date"));
             }
 
             @Override
