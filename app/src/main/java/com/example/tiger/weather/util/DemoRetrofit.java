@@ -16,6 +16,9 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FieldMap;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -75,11 +78,7 @@ public class DemoRetrofit {
         });
 
         //testPost
-        Retrofit retrofitPost = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:2000/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        DemoServiecePost serviecePost = retrofitPost.create(DemoServiecePost.class);
+        DemoServiecePost serviecePost = retrofit.create(DemoServiecePost.class);
         City city = new City();
         city.setCityId("10001010");
         city.setCityName("北京");
@@ -111,6 +110,34 @@ public class DemoRetrofit {
                 Log.d(TAG, "onFailure: post " + t.getMessage());
             }
         });
+
+        DemoServiecePostField serviecePostField = retrofit.create(DemoServiecePostField.class);
+        Call<RequestBody> callPostField = serviecePostField.testHttpPostField("john", 18, hashMap);
+        callPostField.enqueue(new Callback<RequestBody>() {
+            @Override
+            public void onResponse(Call<RequestBody> call, Response<RequestBody> response) {
+                if (response.headers() != null) {
+                    Log.d(TAG, "onResponse: postfield" + response.headers().toString());
+                } else {
+                    Log.d(TAG, "onResponse: postfield header is null");
+                }
+                if (response.errorBody() != null) {
+                    Log.d(TAG, "onResponse: postfield" + response.errorBody().toString());
+                } else {
+                    Log.d(TAG, "onResponse: postfield  errorbody is null");
+                }
+                if (response.body() != null) {
+                    Log.d(TAG, "onResponse: postfield" + response.body().toString());
+                } else {
+                    Log.d(TAG, "onResponse: postfield  body is null");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RequestBody> call, Throwable t) {
+                Log.d(TAG, "onFailure: postfield" + t.getMessage());
+            }
+        });
     }
 
 
@@ -122,5 +149,11 @@ public class DemoRetrofit {
     public interface DemoServiecePost {
         @POST("hello")
         Call<RequestBody> testHttpPost(@Body City city);
+    }
+
+    public interface DemoServiecePostField {
+        @FormUrlEncoded
+        @POST("hello")
+        Call<RequestBody> testHttpPostField(@Field("username") String name, @Field("age") int age, @FieldMap Map<String, String> options);
     }
 }
