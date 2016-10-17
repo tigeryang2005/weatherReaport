@@ -6,6 +6,8 @@ import com.example.tiger.weather.model.City;
 import com.example.tiger.weather.model.testResponse;
 import com.orhanobut.logger.Logger;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -112,32 +114,37 @@ public class DemoRetrofit {
         });
 
         DemoServiecePostField serviecePostField = retrofit.create(DemoServiecePostField.class);
-        Call<RequestBody> callPostField = serviecePostField.testHttpPostField("john", 18, hashMap);
-        callPostField.enqueue(new Callback<RequestBody>() {
-            @Override
-            public void onResponse(Call<RequestBody> call, Response<RequestBody> response) {
-                if (response.headers() != null) {
-                    Log.d(TAG, "onResponse: postfield" + response.headers().toString());
-                } else {
-                    Log.d(TAG, "onResponse: postfield header is null");
+        try {
+            String str = URLEncoder.encode("张得帅", "UTF-8");
+            Call<RequestBody> callPostField = serviecePostField.testHttpPostField(str, 18, hashMap);
+            callPostField.enqueue(new Callback<RequestBody>() {
+                @Override
+                public void onResponse(Call<RequestBody> call, Response<RequestBody> response) {
+                    if (response.headers() != null) {
+                        Log.d(TAG, "onResponse: postfield" + response.headers().toString());
+                    } else {
+                        Log.d(TAG, "onResponse: postfield header is null");
+                    }
+                    if (response.errorBody() != null) {
+                        Log.d(TAG, "onResponse: postfield" + response.errorBody().toString());
+                    } else {
+                        Log.d(TAG, "onResponse: postfield  errorbody is null");
+                    }
+                    if (response.body() != null) {
+                        Log.d(TAG, "onResponse: postfield" + response.body().toString());
+                    } else {
+                        Log.d(TAG, "onResponse: postfield  body is null");
+                    }
                 }
-                if (response.errorBody() != null) {
-                    Log.d(TAG, "onResponse: postfield" + response.errorBody().toString());
-                } else {
-                    Log.d(TAG, "onResponse: postfield  errorbody is null");
-                }
-                if (response.body() != null) {
-                    Log.d(TAG, "onResponse: postfield" + response.body().toString());
-                } else {
-                    Log.d(TAG, "onResponse: postfield  body is null");
-                }
-            }
 
-            @Override
-            public void onFailure(Call<RequestBody> call, Throwable t) {
-                Log.d(TAG, "onFailure: postfield" + t.getMessage());
-            }
-        });
+                @Override
+                public void onFailure(Call<RequestBody> call, Throwable t) {
+                    Log.d(TAG, "onFailure: postfield" + t.getMessage());
+                }
+            });
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
 
