@@ -20,7 +20,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
-import retrofit2.http.Headers;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -113,7 +113,8 @@ public class DemoRetrofit {
         });
 
         DemoServiecePostField serviecePostField = retrofit.create(DemoServiecePostField.class);
-        Call<RequestBody> callPostField = serviecePostField.testHttpPostField("张得帅", 18, hashMap);
+        String str = "application/x-www-form-urlencode;charset=UTF-8";
+        Call<RequestBody> callPostField = serviecePostField.testHttpPostField("张得帅", 18, hashMap, str);
         callPostField.enqueue(new Callback<RequestBody>() {
             @Override
             public void onResponse(Call<RequestBody> call, Response<RequestBody> response) {
@@ -153,9 +154,10 @@ public class DemoRetrofit {
     }
 
     public interface DemoServiecePostField {
-        @Headers("Content-type:application/x-www-form-urlencode;charset=UTF-8")
+        //@Headers("Content-type:application/x-www-form-urlencode;charset=UTF-8")
         @FormUrlEncoded
         @POST("hello")
-        Call<RequestBody> testHttpPostField(@Field("username") String name, @Field("age") int age, @FieldMap Map<String, String> options);
+        Call<RequestBody> testHttpPostField(@Field("username") String name, @Field("age") int age
+                , @FieldMap Map<String, String> options, @Header("Content-type") String contentType);
     }
 }
