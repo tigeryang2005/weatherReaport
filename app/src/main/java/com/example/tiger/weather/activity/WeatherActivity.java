@@ -130,7 +130,8 @@ public class WeatherActivity extends Activity implements View.OnClickListener {
                 } else if ("weatherCode".equals(type)) {
                     weatherinfo = Utility.handleWeatherRespose(WeatherActivity.this, response);
                     DemoRetrofit demoRetrofit = new DemoRetrofit();
-                    demoRetrofit.testRetrofitHttpGet("");
+                    String str = getFilesDir().getAbsolutePath() + "/inad_src/img_flu/";
+                    demoRetrofit.testRetrofitHttpGet("", str);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

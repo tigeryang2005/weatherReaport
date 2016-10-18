@@ -6,9 +6,11 @@ import com.example.tiger.weather.model.City;
 import com.example.tiger.weather.model.testResponse;
 import com.orhanobut.logger.Logger;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -21,7 +23,9 @@ import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
@@ -34,7 +38,7 @@ import static android.content.ContentValues.TAG;
 
 public class DemoRetrofit {
 
-    public void testRetrofitHttpGet(String cityId) {
+    public void testRetrofitHttpGet(String cityId, String path) {
         //step1
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://10.0.2.2:2000/")
@@ -67,9 +71,9 @@ public class DemoRetrofit {
                 } else {
                     Log.d(TAG, "onResponse: body is null");
                 }
-                Log.d(TAG, "onResponse: " + response.body().a);
-                Log.d(TAG, "onResponse: " + response.body().b);
-                Logger.d(response.body().c);
+//                Log.d(TAG, "onResponse: " + response.body().a);
+//                Log.d(TAG, "onResponse: " + response.body().b);
+//                Logger.d(response.body().c);
                 //Retrofit 的 Response 还有一个方法叫做 raw()，调用该方法就可以把 Retrofit 的Response
                 // 转换为原生的 OkHttp 当中的 Response。而现在我们就很容器实现 header 的读取了吧。
                 Log.d(TAG, "onResponse: throgh raw to get Date is: " + response.raw().header("Date"));
@@ -143,6 +147,40 @@ public class DemoRetrofit {
                 Log.d(TAG, "onFailure: postfield" + t.getMessage());
             }
         });
+
+        //test upload file
+//        String string = Environment.getExternalStorageDirectory().getAbsolutePath();
+//        Logger.d(string);
+        Logger.d(path);
+        File file = new File(path, "45952915.urlimage");
+        DemoServieceUploadFile demoServieceUploadFile = retrofit.create(DemoServieceUploadFile.class);
+        RequestBody image = RequestBody.create(MediaType.parse("image/png"), file);
+        Call<RequestBody> callUploadFile = demoServieceUploadFile.testMultiPart(image);
+        callUploadFile.enqueue(new Callback<RequestBody>() {
+            @Override
+            public void onResponse(Call<RequestBody> call, Response<RequestBody> response) {
+                if (response.headers() != null) {
+                    Log.d(TAG, "onResponse: postfile" + response.headers().toString());
+                } else {
+                    Log.d(TAG, "onResponse: postfile header is null");
+                }
+                if (response.errorBody() != null) {
+                    Log.d(TAG, "onResponse: postfile" + response.errorBody().toString());
+                } else {
+                    Log.d(TAG, "onResponse: postfile  errorbody is null");
+                }
+                if (response.body() != null) {
+                    Log.d(TAG, "onResponse: postfile" + response.body().toString());
+                } else {
+                    Log.d(TAG, "onResponse: postfile  body is null");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RequestBody> call, Throwable t) {
+                Log.d(TAG, "onFailure: postfile" + t.getMessage());
+            }
+        });
     }
 
 
@@ -162,5 +200,11 @@ public class DemoRetrofit {
         @POST("hello")
         Call<RequestBody> testHttpPostField(@Field("username") String name, @Field("age") int age
                 , @FieldMap Map<String, String> options, @Header("Content-type") String contentType);
+    }
+
+    public interface DemoServieceUploadFile {
+        @Multipart()
+        @POST("uploadfile")
+        Call<RequestBody> testMultiPart(@Part("file\";filename=\"45952915.urlimage") RequestBody picFile);
     }
 }

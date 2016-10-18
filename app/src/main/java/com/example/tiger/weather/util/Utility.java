@@ -65,7 +65,7 @@ public class Utility {
             jObject.add("map", jElement);
             jElement = gson.toJsonTree(new String[]{"sex", "weight", "height"});
             jObject.add("string[]", jElement);
-            Logger.json(jObject.toString());
+            //Logger.json(jObject.toString());
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
             editor.putBoolean("city_selected", true);
             editor.apply();
