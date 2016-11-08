@@ -5,9 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.View;
 import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -53,22 +51,19 @@ public class ChooseAreaActivity extends Activity {
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, dataList);
         listView.setAdapter(adapter);
         wrDb = WrDb.getInstence(this);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (currentLevel == LEVEL_PROVINCE) {
-                    selectedProvince = provinceList.get(position);
-                    queryCities();
-                } else if (currentLevel == LEVEL_CITY) {
-                    selectedCity = cityList.get(position);
-                    queryCounties();
-                } else if (currentLevel == LEVEL_COUNTY) {
-                    String countyCode = countyList.get(position).getCountyId();
-                    Intent intent = new Intent(ChooseAreaActivity.this, WeatherActivity.class);
-                    intent.putExtra("county_code", countyCode);
-                    startActivity(intent);
-                    finish();
-                }
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            if (currentLevel == LEVEL_PROVINCE) {
+                selectedProvince = provinceList.get(position);
+                queryCities();
+            } else if (currentLevel == LEVEL_CITY) {
+                selectedCity = cityList.get(position);
+                queryCounties();
+            } else if (currentLevel == LEVEL_COUNTY) {
+                String countyCode = countyList.get(position).getCountyId();
+                Intent intent = new Intent(ChooseAreaActivity.this, WeatherActivity.class);
+                intent.putExtra("county_code", countyCode);
+                startActivity(intent);
+                finish();
             }
         });
         queryProvince();
@@ -95,17 +90,14 @@ public class ChooseAreaActivity extends Activity {
                 }
                 if (result) {
                     //通过runOnUiThread()方法回到主线程处理逻辑
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            closeProgressDialog();
-                            if ("province".equals(type)) {
-                                queryProvince();
-                            } else if ("city".equals(type)) {
-                                queryCities();
-                            } else if ("county".equals(type)) {
-                                queryCounties();
-                            }
+                    runOnUiThread(() -> {
+                        closeProgressDialog();
+                        if ("province".equals(type)) {
+                            queryProvince();
+                        } else if ("city".equals(type)) {
+                            queryCities();
+                        } else if ("county".equals(type)) {
+                            queryCounties();
                         }
                     });
                 }
@@ -113,12 +105,9 @@ public class ChooseAreaActivity extends Activity {
 
             @Override
             public void onError(Exception e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        closeProgressDialog();
-                        Toast.makeText(ChooseAreaActivity.this, "加载失败", Toast.LENGTH_SHORT).show();
-                    }
+                runOnUiThread(() -> {
+                    closeProgressDialog();
+                    Toast.makeText(ChooseAreaActivity.this, "加载失败", Toast.LENGTH_SHORT).show();
                 });
             }
         });

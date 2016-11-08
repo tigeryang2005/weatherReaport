@@ -50,15 +50,12 @@ public class AutoUpdateService extends Service {
             }
         };
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //updateWeather();
-                Logger.e("print every minite");
-                Message message = new Message();
-                message.what = 1;
-                mhandler.sendMessage(message);
-            }
+        new Thread(() -> {
+            //updateWeather();
+            Logger.e("print every minite");
+            Message message = new Message();
+            message.what = 1;
+            mhandler.sendMessage(message);
         }).start();
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         int anHour = 1000 * 60 * 60 * 8;

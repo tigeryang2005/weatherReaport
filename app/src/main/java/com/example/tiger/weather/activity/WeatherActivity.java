@@ -132,24 +132,16 @@ public class WeatherActivity extends Activity implements View.OnClickListener {
                     DemoRetrofit demoRetrofit = new DemoRetrofit();
                     String str = getFilesDir().getAbsolutePath() + "/inad_src/img_flu/";
                     demoRetrofit.testRetrofitHttpGet("", str);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            showWeather(weatherinfo.weatherinfo);
-                        }
-                    });
+                    Runnable task = () -> showWeather(weatherinfo.weatherinfo);
+                    runOnUiThread(task);
                 }
             }
 
             @Override
             public void onError(Exception e) {
                 Logger.e(e.toString());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        publishText.setText("同步失败");
-                    }
-                });
+                Runnable task = () -> publishText.setText("同步失败");
+                runOnUiThread(task);
             }
         });
     }
