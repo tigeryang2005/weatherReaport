@@ -16,6 +16,7 @@ import com.example.tiger.weather.db.WrDb;
 import com.example.tiger.weather.model.City;
 import com.example.tiger.weather.model.County;
 import com.example.tiger.weather.model.Province;
+import com.example.tiger.weather.model.testResponse;
 import com.example.tiger.weather.util.HttpCallbackListener;
 import com.example.tiger.weather.util.HttpUtil;
 import com.example.tiger.weather.util.TestService;
@@ -103,14 +104,15 @@ public class ChooseAreaActivity extends Activity {
         testService.getResponse("http://10.0.2.2:2000/")//获取Observable对象
                 .subscribeOn(Schedulers.newThread())//请求在新的线程中执行
                 .observeOn(Schedulers.io())//请求完成后在IO线程中执行
-                .doOnNext(new Action1<String>() {
+                .doOnNext(new Action1<testResponse>() {
                     @Override
-                    public void call(String s) {
-                        Logger.d(s);
+                    public void call(testResponse test) {
+                        Logger.d(test.c);
+                        Logger.d(test.a);
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())//最后在主线程中执行
-                .subscribe(new Observer<String>() {
+                .subscribe(new Observer<testResponse>() {
                     @Override
                     public void onCompleted() {
                         Logger.d("请求完成");
@@ -123,8 +125,8 @@ public class ChooseAreaActivity extends Activity {
                     }
 
                     @Override
-                    public void onNext(String s) {
-                        Logger.d("请求之后" + s);
+                    public void onNext(testResponse test) {
+                        Logger.d("请求之后 " + test.a);
                     }
                 });
     }

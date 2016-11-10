@@ -1,5 +1,7 @@
 package com.example.tiger.weather.util;
 
+import com.example.tiger.weather.model.testResponse;
+
 import retrofit2.http.GET;
 import retrofit2.http.Url;
 import rx.Observable;
@@ -10,5 +12,5 @@ import rx.Observable;
 
 public interface TestService {
     @GET()
-    Observable<String> getResponse(@Url String s);
+    Observable<testResponse> getResponse(@Url String s);
 }
