@@ -131,7 +131,7 @@ public class WeatherActivity extends Activity implements View.OnClickListener {
                     weatherinfo = Utility.handleWeatherRespose(WeatherActivity.this, response);
                     DemoRetrofit demoRetrofit = new DemoRetrofit();
                     String str = getFilesDir().getAbsolutePath() + "/inad_src/img_flu/";
-                    demoRetrofit.testRetrofitHttpGet("", str);
+                    demoRetrofit.testRetrofitHttpGet("123", str);
                     Runnable task = () -> showWeather(weatherinfo.weatherinfo);
                     runOnUiThread(task);
                 }

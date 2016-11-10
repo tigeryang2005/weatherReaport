@@ -4,7 +4,6 @@ import android.util.Log;
 
 import com.example.tiger.weather.model.City;
 import com.example.tiger.weather.model.testResponse;
-import com.orhanobut.logger.Logger;
 
 import java.io.File;
 import java.util.HashMap;
@@ -151,7 +150,7 @@ public class DemoRetrofit {
         //test upload file
 //        String string = Environment.getExternalStorageDirectory().getAbsolutePath();
 //        Logger.d(string);
-        Logger.d(path);
+        // Logger.d(path);
         File file = new File(path, "45952915.urlimage");
         DemoServieceUploadFile demoServieceUploadFile = retrofit.create(DemoServieceUploadFile.class);
         RequestBody image = RequestBody.create(MediaType.parse("image/png"), file);

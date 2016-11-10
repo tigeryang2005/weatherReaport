@@ -18,10 +18,24 @@ import com.example.tiger.weather.model.County;
 import com.example.tiger.weather.model.Province;
 import com.example.tiger.weather.util.HttpCallbackListener;
 import com.example.tiger.weather.util.HttpUtil;
+import com.example.tiger.weather.util.TestService;
 import com.example.tiger.weather.util.Utility;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 public class ChooseAreaActivity extends Activity {
     public static final int LEVEL_PROVINCE = 0;
@@ -67,6 +81,52 @@ public class ChooseAreaActivity extends Activity {
             }
         });
         queryProvince();
+
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(12, TimeUnit.SECONDS)
+                .readTimeout(12, TimeUnit.SECONDS)
+                .writeTimeout(12, TimeUnit.SECONDS)
+                .addInterceptor(new HttpLoggingInterceptor()
+                        .setLevel(HttpLoggingInterceptor.Level.BODY))
+                .build();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://10.0.2.2:2000/")
+                .client(client)
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())//新的配置
+                .build();
+
+        TestService testService = retrofit.create(TestService.class);
+        testService.getResponse("http://10.0.2.2:2000/")//获取Observable对象
+                .subscribeOn(Schedulers.newThread())//请求在新的线程中执行
+                .observeOn(Schedulers.io())//请求完成后在IO线程中执行
+                .doOnNext(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        Logger.d(s);
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())//最后在主线程中执行
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onCompleted() {
+                        Logger.d("请求完成");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        Logger.d("请求错误" + e.toString());
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                        Logger.d("请求之后" + s);
+                    }
+                });
     }
 
     private void queryFromServer(final String code, final String type) {
